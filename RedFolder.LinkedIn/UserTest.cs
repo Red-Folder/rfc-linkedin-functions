@@ -11,6 +11,14 @@ namespace RedFolder.LinkedIn
 {
     public class UserTest
     {
+        private readonly LinkedInProxy _proxy;
+
+        public UserTest(LinkedInProxy proxy)
+        {
+            _proxy = proxy;
+        }
+
+
         [FunctionName("UserTest")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]HttpRequest request,
                                 [OrchestrationClient]IDurableOrchestrationClient entityClient,
@@ -21,7 +29,16 @@ namespace RedFolder.LinkedIn
 
             var current = await entityClient.ReadEntityStateAsync<UserData>(testEntity);
 
-            return new OkObjectResult(current);
+            if (current.EntityExists)
+            {
+                var share = new ShareRequest(current.EntityState.PersonId);
+                share.Text = new Text { Content = "Test share" };
+                await _proxy.Share(current.EntityState.AccessToken, share);
+
+                return new OkObjectResult(current);
+            }
+
+            return new UnauthorizedResult();
         }
     }
 }

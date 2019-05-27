@@ -13,6 +13,7 @@ namespace RedFolder.LinkedIn
     {
         private const string AccessTokenUrl = "https://www.linkedin.com/oauth/v2/accessToken";
         private const string MeUrl = "https://api.linkedin.com/v2/me";
+        private const string ShareUrl = "https://api.linkedin.com/v2/shares";
 
         private static HttpClient _client = new HttpClient();
 
@@ -48,6 +49,16 @@ namespace RedFolder.LinkedIn
             var result = JsonConvert.DeserializeObject<MeResponse>(json);
 
             return result;
+        }
+
+        public async Task Share(string accessToken, ShareRequest share)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            _client.DefaultRequestHeaders.Add("X-Restli-Protocol-Version", "2.0.0");
+
+            var json = JsonConvert.SerializeObject(share);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync(ShareUrl, content);
         }
     }
 }
