@@ -31,7 +31,9 @@ namespace RedFolder.LinkedIn
 
             var redirectUri = RedirectUri.Generate(request);
 
-            var tmp = await _proxy.GetAccesToken(code, redirectUri, clientId, clientSecret);
+            var accessToken = await _proxy.AccessToken(code, redirectUri, clientId, clientSecret);
+
+            var tmp = await _proxy.Me(accessToken.AccessToken);
 
             return new OkResult();
         }

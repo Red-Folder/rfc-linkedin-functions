@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
+using RedFolder.LinkedIn.Models;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,10 +12,11 @@ namespace RedFolder.LinkedIn
     public class LinkedInProxy
     {
         private const string AccessTokenUrl = "https://www.linkedin.com/oauth/v2/accessToken";
+        private const string MeUrl = "https://api.linkedin.com/v2/me";
 
         private static HttpClient _client = new HttpClient();
 
-        public async Task<string> GetAccesToken(string code, string redirectUri, string clientId, string clientSecret)
+        public async Task<AccessTokenResponse> AccessToken(string code, string redirectUri, string clientId, string clientSecret)
         {
             var payload = new List<KeyValuePair<string, string>>
             {
@@ -26,17 +30,24 @@ namespace RedFolder.LinkedIn
 
             var response = await _client.PostAsync(AccessTokenUrl, content);
 
-            // Convert response to accesstokenrepose object
+            var json = await response.Content.ReadAsStringAsync();
 
-            return "";
+            var result = JsonConvert.DeserializeObject<AccessTokenResponse>(json);
+
+            return result;
         }
 
-        public class AccessTokenResponse
+        public async Task< MeResponse> Me(string accessToken)
         {
-            [JsonProperty("access_token")]
-            public string AccessToken { get; set; }
-            [JsonProperty("expires_in")]
-            public long ExpiresIn { get; set; }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            _client.DefaultRequestHeaders.Add("X-Restli-Protocol-Version", "2.0.0");
+            var response = await _client.GetAsync(MeUrl);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<MeResponse>(json);
+
+            return result;
         }
     }
 }
