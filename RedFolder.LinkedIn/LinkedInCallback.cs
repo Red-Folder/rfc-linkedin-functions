@@ -32,7 +32,6 @@ namespace RedFolder.LinkedIn
 
             var clientId = Environment.GetEnvironmentVariable("LinkedInClientId", EnvironmentVariableTarget.Process);
             var clientSecret = Environment.GetEnvironmentVariable("LinkedInClientSecret", EnvironmentVariableTarget.Process);
-            var entityHub = Environment.GetEnvironmentVariable("EntityHub", EnvironmentVariableTarget.Process);
 
             var redirectUri = RedirectUri.Generate(request);
 
@@ -49,7 +48,7 @@ namespace RedFolder.LinkedIn
 
             var entityId = new EntityId(nameof(User), state);
 
-            await entityClient.SignalEntityAsync(entityId, "", userData, entityHub);
+            await entityClient.SignalEntityAsync(entityId, "", userData, "default");
 
             return new OkObjectResult("Done - you can close ths window");
         }
