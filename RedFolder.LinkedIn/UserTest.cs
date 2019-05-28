@@ -20,7 +20,7 @@ namespace RedFolder.LinkedIn
 
 
         [FunctionName("UserTest")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]HttpRequest request,
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest request,
                                 [OrchestrationClient]IDurableOrchestrationClient entityClient,
                                 TraceWriter log)
         {

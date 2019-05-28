@@ -13,7 +13,7 @@ namespace RedFolder.LinkedIn
         private const string LINKEDIN_URL = "https://www.linkedin.com/oauth/v2/authorization";
 
         [FunctionName("StartAuthentication")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]HttpRequest request, TraceWriter log)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest request, TraceWriter log)
         {
             var clientId = Environment.GetEnvironmentVariable("LinkedInClientId", EnvironmentVariableTarget.Process);
             var state = request.Query["userid"];
